@@ -55,6 +55,15 @@ class TaskForm extends Component {
         status : false
       })
     }
+    
+    onCancel = () => {
+      this.onClear();
+      this.onCloseForm();
+    }
+
+   
+
+
     render() {
         return (
             <div className="panel panel-warning">
@@ -78,7 +87,7 @@ class TaskForm extends Component {
                   <br />
                   <div className="text-center">
                     <button type="submit" className="btn btn-warning">Add Data</button>&nbsp;
-                    <button type="submit" onClick={this.onClear} className="btn btn-danger">Cancel</button>
+                    <button type="reset" onClick={this.onCancel} className="btn btn-danger">Cancel</button>
                   </div>
                 </form>
               </div>
