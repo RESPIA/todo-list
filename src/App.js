@@ -6,7 +6,8 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      tasks : []
+      tasks : [],
+      isDissplayForm : false
     }
   }
 
@@ -22,31 +23,29 @@ class App extends Component {
   }
   
 
-  generateData = () =>{
-    var tasks = [
-      {
-        id : this.generateId(),
-        name : "Learn react js",
-        status : true
-      },
-      {
-        id : this.generateId(),
-        name : "Learn Swinming",
-        status : true
-      },
-      {
-        id : this.generateId(),
-        name : "Lean Voleyball",
-        status : true
-      }
-    ];
-    //console.log(tasks);
-    this.setState({
-      tasks : tasks
-    })
+  // generateData = () =>{
+  //   var tasks = [
+  //     {
+  //       id : this.generateId(),
+  //       name : "Learn react js",
+  //       status : true
+  //     },
+  //     {
+  //       id : this.generateId(),
+  //       name : "Learn Swinming",
+  //       status : false
+  //     },
+  //     {
+  //       id : this.generateId(),
+  //       name : "Lean Voleyball",
+  //       status : true
+  //     }
+  //   ];
+  //   //console.log(tasks);
+  //   // s
 
-    localStorage.setItem('tasks',JSON.stringify(tasks));
-  }
+  //   localStorage.setItem('tasks',JSON.stringify(tasks));
+  // }
   
   s4()
   {
@@ -58,32 +57,60 @@ class App extends Component {
     return this.s4() + this.s4() + "-" + this.s4() + "-" + this.s4() + this.s4() + this.s4() + this.s4() + "-" + this.s4();
   }
   
+
+  // toggle Form
+  ToggleForm = () => {
+    this.setState({
+      //this.sisDissplayForm : !isDissplayForm
+      isDissplayForm : !this.state.isDissplayForm
+    })
+  }
+
+  onCloseForm = () => {
+    console.log("Call");
+    this.setState({
+      //this.sisDissplayForm : !isDissplayForm
+      isDissplayForm : false
+    })
+  }
+
+  // Recive data from TaskForm
+  onSubmit = (data) => {
+    var { tasks } = this.state;
+    data.id = this.generateId();
+    //console.log(data);
+    tasks.push(data);
+    this.setState({
+        tasks : tasks
+    });
+    localStorage.setItem('tasks',JSON.stringify(tasks));
+  }
+  
   render() {
-    var { tasks } = this.state; // var tasks = this.state.tasks
+    var { tasks,isDissplayForm } = this.state; // var tasks = this.state.tasks
+                                                          // Close form
+    var elmTaskForm = isDissplayForm === true ? <TaskForm onSubmit={this.onSubmit} onCloseForm={this.onCloseForm} /> : "";
+    //console.log(tasks);
     return (
       <div className="container">
         <div className="text-center">
-          <h1>Quản Lý Công Việc</h1>
+          <h1>Manager Job</h1>
           <hr />
         </div>
         <div className="row">
         
-          <div className="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+          <div className={ isDissplayForm ? "col-xs-4 col-sm-4 col-md-4 col-lg-4" : "" }>
             {/* form */}
-            <TaskForm/>
+
+            {elmTaskForm}
           </div>
           
-          <div className="col-xs-8 col-sm-8 col-md-8 col-lg-8">
-            <button type="button" className="btn btn-primary">
-              <span className="fa fa-plus mr-5" />Thêm Công Việc
+          <div className={ isDissplayForm ? "col-xs-8 col-sm-8 col-md-8 col-lg-8" : "col-xs-12 col-sm-12 col-md-12 col-lg-12" }>
+            <button type="button" className="btn btn-primary" onClick={this.ToggleForm}>
+              <span className="fa fa-plus mr-5" />New Todolist
             </button>
 
-            <button type="button"
-                    className="btn btn-danger"
-                    onClick={this.generateData}
-                    >
-              <span className="fa fa-plus mr-5" />Generate data
-            </button>
+           
             <br />
             <br />
             
@@ -92,7 +119,7 @@ class App extends Component {
             <br />
             <div className="row mt-15">
               <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                <TaskList/>
+                <TaskList tasks={tasks}/>
               </div>
             </div>
           </div>

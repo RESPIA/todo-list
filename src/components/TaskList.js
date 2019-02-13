@@ -4,16 +4,19 @@ import TaskItem from './TaskItem';
 class TaskList extends Component {
     render() {
         // show list data
-      
+        var { tasks } = this.props;
+        var elmTasks = tasks.map((task,index)=>{
+          return <TaskItem key={task.id} index={index} task={task}/>
+        });
         return (
             <div>
                 <table className="table table-bordered table-hover">
                   <thead>
                     <tr>
                       <th className="text-center">STT</th>
-                      <th className="text-center">Tên</th>
-                      <th className="text-center">Trạng Thái</th>
-                      <th className="text-center">Hành Động</th>
+                      <th className="text-center">Name</th>
+                      <th className="text-center">Status</th>
+                      <th className="text-center">Action</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -24,15 +27,15 @@ class TaskList extends Component {
                       </td>
                       <td>
                         <select className="form-control">
-                          <option value={-1}>Tất Cả</option>
-                          <option value={0}>Ẩn</option>
-                          <option value={1}>Kích Hoạt</option>
+                          <option value={-1}>All</option>
+                          <option value={0}>Visibility</option>
+                          <option value={1}>Active</option>
                         </select>
                       </td>
                       <td />
                     </tr>
                     
-                    <TaskItem/>
+                    { elmTasks }
                   </tbody>
                 </table>
             </div>

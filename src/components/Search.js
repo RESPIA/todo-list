@@ -8,7 +8,7 @@ class Search extends Component {
                 <input type="text" className="form-control" placeholder="Nhập từ khóa..." />
                 <span className="input-group-btn">
                     <button className="btn btn-primary" type="button">
-                    <span className="fa fa-search mr-5" />Tìm
+                    <span className="fa fa-search mr-5" />Search
                     </button>
                 </span>
                 </div>
