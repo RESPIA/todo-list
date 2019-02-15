@@ -10,6 +10,11 @@ class TaskItem extends Component {
     onUpdateStatus = () =>{
         this.props.onUpdateStatus(this.props.task.id);
     }
+
+    onUpdate = () =>{
+        this.props.onUpdate(this.props.task.id);
+    }
+    
     render() {
         var {  task,index }   = this.props;
         return (
@@ -22,7 +27,7 @@ class TaskItem extends Component {
                     </span>
                     </td>
                     <td className="text-center">
-                    <button type="button" className="btn btn-warning">
+                    <button type="button" onClick={this.onUpdate} className="btn btn-warning">
                         <span className="fa fa-pencil mr-5" />Edit
                     </button>
                     &nbsp;

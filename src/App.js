@@ -7,7 +7,12 @@ class App extends Component {
     super(props);
     this.state = {
       tasks : [],
-      isDissplayForm : false
+      isDissplayForm : false,
+      taskEditting : null,
+      fillter : {
+        name : '',
+        status : -1
+      }
     }
   }
 
@@ -60,26 +65,48 @@ class App extends Component {
 
   // toggle Form
   ToggleForm = () => {
-    this.setState({
-      //this.sisDissplayForm : !isDissplayForm
-      isDissplayForm : !this.state.isDissplayForm
-    })
+    // form dang mo, va form dang sua, => dang edit
+    if(this.state.isDissplayForm && this.state.taskEditting !== null)
+    {
+      this.setState({
+        isDissplayForm : true,
+        taskEditting : null
+      })
+    }else{
+      this.setState({
+        isDissplayForm : !this.state.isDissplayForm,
+        taskEditting : null
+      })
+    }
   }
 
   onCloseForm = () => {
-    console.log("Call");
+    //console.log("Call");
     this.setState({
-      //this.sisDissplayForm : !isDissplayForm
       isDissplayForm : false
     })
   }
 
+  onOpenForm = () => {
+    this.setState({
+      isDissplayForm : true,
+    })
+  }
   // Recive data from TaskForm
   onSubmit = (data) => {
+    console.log(data);
     var { tasks } = this.state;
-    data.id = this.generateId();
-    //console.log(data);
-    tasks.push(data);
+
+    // id = null => add new data
+    if(data.id === ""){
+      data.id = this.generateId();
+      //console.log(data);
+      tasks.push(data);
+    }else{
+      var index  = this.findIndex(data.id);
+      tasks[index] = data;
+    }
+   
     this.setState({
         tasks : tasks
     });
@@ -88,6 +115,19 @@ class App extends Component {
   }
 
   
+  findIndex = (id) =>{
+    var {tasks} = this.state;
+    var result = -1;
+    tasks.forEach((task,index)=>{
+      if(task.id === id)
+      {
+        result = index
+      }
+    });
+    return result;
+  }
+
+
   onDelete = (id) => {
     var {tasks} = this.state;
     var index  = this.findIndex(id);
@@ -122,25 +162,69 @@ class App extends Component {
 
   }
 
+  onUpdate = (id) =>{
+    //console.log(id);
+    this.onOpenForm();
+     //console.log(id);
+     var { tasks } = this.state;
+     var index = this.findIndex(id);
 
-  findIndex = (id) =>{
-    var {tasks} = this.state;
-    var result = -1;
-    tasks.forEach((task,index)=>{
-      if(task.id === id)
-      {
-        result = index
+     var taskEditting = tasks[index];
+     
+     //console.log(taskEditting);
+     this.setState({
+       taskEditting : taskEditting
+     },()=>{
+      //  this.setState({
+      //     taskEditting : taskEditting
+      //  })
+     });
+     //console.log(this.state.taskEditting);
+  }
+
+
+  onFillter = (fillterName, fillterStatus) => {
+    //console.log(fillterName + "-"+ fillterStatus);
+    //console.log(typeof fillterStatus);
+    fillterStatus = parseInt(fillterStatus,10);
+    this.setState({
+      fillter : {
+        name : fillterName,
+        status : fillterStatus
       }
-    });
-    return result;
+    })
+    //console.log(typeof fillterStatus);
   }
 
 
 
   render() {
-    var { tasks,isDissplayForm } = this.state; // var tasks = this.state.tasks
+    var { tasks,isDissplayForm,taskEditting,fillter } = this.state; // var tasks = this.state.tasks
                                                           // Close form
-    var elmTaskForm = isDissplayForm === true ? <TaskForm onSubmit={this.onSubmit} onCloseForm={this.onCloseForm} /> : "";
+    console.log(fillter);
+
+    if(fillter)
+    {
+      if(fillter.name)
+      {
+        tasks = tasks.filter((task)=>{
+          return task.name.toLowerCase().indexOf(fillter.name) !== -1;
+        });
+        console.log(tasks);
+      }
+      // if(fillter.status)
+      // {
+        tasks = tasks.filter((task)=>{
+          if(fillter.status === -1)
+          {
+            return task;
+          }else{
+            return task.status === (fillter.status === 1 ? true : false);
+          }
+        });
+      //}
+    }
+    var elmTaskForm = isDissplayForm === true ? <TaskForm taskEditting={taskEditting} onSubmit={this.onSubmit} onCloseForm={this.onCloseForm} /> : "";
     //console.log(tasks);
     return (
       <div className="container">
@@ -152,13 +236,12 @@ class App extends Component {
         
           <div className={ isDissplayForm ? "col-xs-4 col-sm-4 col-md-4 col-lg-4" : "" }>
             {/* form */}
-
-            {elmTaskForm}
+              {elmTaskForm}
           </div>
           
           <div className={ isDissplayForm ? "col-xs-8 col-sm-8 col-md-8 col-lg-8" : "col-xs-12 col-sm-12 col-md-12 col-lg-12" }>
             <button type="button" className="btn btn-primary" onClick={this.ToggleForm}>
-              <span className="fa fa-plus mr-5" />New Todolist
+              <span className="fa fa-plus mr-5" />New Task
             </button>
 
            
@@ -170,7 +253,12 @@ class App extends Component {
             <br />
             <div className="row mt-15">
               <div className="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                <TaskList onUpdateStatus={this.onUpdateStatus} onDelete={ this.onDelete } tasks={tasks}/>
+                <TaskList onUpdate={this.onUpdate}
+                          onUpdateStatus={this.onUpdateStatus} 
+                          onDelete={ this.onDelete } 
+                          tasks={tasks}
+                          onFillter={this.onFillter}
+                          />
               </div>
             </div>
           </div>

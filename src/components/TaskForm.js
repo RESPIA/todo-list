@@ -5,11 +5,51 @@ class TaskForm extends Component {
       super(props);
       
       this.state = {
+        id : "",
         name : "",
         status : false
       }
     }
-  
+
+    // Form is run one 
+    componentWillMount() {
+      if (this.props.taskEditting) {
+        this.setState({
+          id: this.props.taskEditting.id,
+          name: this.props.taskEditting.name,
+          status: this.props.taskEditting.status
+        });
+        //console.log(this.state);
+      }
+    }
+    
+    
+   // after first time, data update will run func
+   componentWillReceiveProps = (nextProps) => {
+    // send data to form eidt
+    if (nextProps && nextProps.taskEditting) {
+      this.setState({
+        id: nextProps.taskEditting.id,
+        name: nextProps.taskEditting.name,
+        status: nextProps.taskEditting.status
+      });
+      //console.log(this.state);
+    }
+
+    // reset form in case is edit=>new
+    if(nextProps && nextProps.taskEditting === null)
+    {
+      //console.log("edit->add");
+      this.setState({
+        // id = "" => case add (and id !== "" => case edit)
+          id : "",
+          name : "",
+          status : false
+      });
+    }
+
+   }
+     
     // Close form
     onCloseForm = () => {
       this.props.onCloseForm();
@@ -65,13 +105,14 @@ class TaskForm extends Component {
 
 
     render() {
+        var {id} = this.state;
         return (
             <div className="panel panel-warning">
               <div className="panel-heading">
                 <button type="button" className="close" aria-label="Close" onClick={this.onCloseForm}>
                     <span aria-hidden="true">&times;</span>
                 </button>
-                <h3 className="panel-title"> New Totolist </h3>
+                <h3 className="panel-title"> { id !== "" ? "Updated task" : "New Task"} </h3>
               </div>
               <div className="panel-body">
                 <form  onSubmit={this.onSubmit}>
@@ -86,7 +127,7 @@ class TaskForm extends Component {
                   </select>
                   <br />
                   <div className="text-center">
-                    <button type="submit" className="btn btn-warning">Add Data</button>&nbsp;
+                    <button type="submit" className="btn btn-warning">Save Data</button>&nbsp;
                     <button type="reset" onClick={this.onCancel} className="btn btn-danger">Cancel</button>
                   </div>
                 </form>
